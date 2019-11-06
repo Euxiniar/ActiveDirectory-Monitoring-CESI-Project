@@ -1,0 +1,17 @@
+Group;Domain;Name;Surname;DisplayName;DisplaySurname;DisplayNameSurname;Login;Full-Login;OU;Groups
+iSEC-Group;isec-group.local;oliver;komski;Oliver;KOMSKI;Oliver KOMSKI;oliver.komski;oliver.komski@isec-group.local;;
+iSEC-Group;isec-group.local;daphne;meynot;Daphne;MEYNOT;Daphne MEYNOT;daphne.meynot;daphne.meynot@isec-group.local;;
+iSEC-Group;isec-group.local;julie;bertali;Julie;BERTALI;Julie BERTALI;julie.bertali;julie.bertali@isec-group.local;;
+iSEC-Group;isec-group.local;yves;tyrael;Yves;TYRAEL;Yves TYRAEL;yves.tyrael;yves.tyrael@isec-group.local;;
+iSEC-Group;isec-group.local;paolo;nolan;Paolo;NOLAN;Paolo NOLAN;paolo.nolan;paolo.nolan@isec-group.local;;
+iSEC-Group;isec-group.local;olivier;rousseaux;Olivier;ROUSSEAUX;Olivier ROUSSEAUX;olivier.rousseaux;olivier.rousseaux@isec-group.local;;
+iSEC-Group;isec-group.local;pedro;aubergier;Pedro;AUBERGIER;Pedro AUBERGIER;pedro.aubergier;pedro.aubergier@isec-group.local;;
+iSEC-Group;isec-group.local;ludwig;corret;Ludwig;CORRET;Ludwig CORRET;ludwig.corret;ludwig.corret@isec-group.local;;
+iSEC-Group;isec-group.local;herve;leleu;Herve;LELEU;Herve LELEU;herve.leleu;herve.leleu@isec-group.local;;
+iSEC-Group;isec-group.local;philippe;marie;Philippe;MARIE;Philippe MARIE;philippe.marie;philippe.marie@isec-group.local;;
+iSEC-Group;isec-group.local;denise;dupre;Denise;DUPRE;Denise DUPRE;denise.dupre;denise.dupre@isec-group.local;;
+iSEC-Group;isec-group.local;baptiste;colmard;Baptiste;COLMARD;Baptiste COLMARD;baptiste.colmard;baptiste.colmard@isec-group.local;;
+iSEC-Group;isec-group.local;laura;deget;Laura;DEGET;Laura DEGET;laura.deget;laura.deget@isec-group.local;;
+iSEC-Group;isec-group.local;denis;vinitost;Denis;VINITOST;Denis VINITOST;denis.vinitost;denis.vinitost@isec-group.local;;
+iSEC-Group;isec-group.local;sylvie;duchene;Sylvie;DUCHENE;Sylvie DUCHENE;sylvie.duchene;sylvie.duchene@isec-group.local;;
+iSEC-Group;isec-group.local;didier;arnaud;Didier;ARNAUD;Didier ARNAUD;didier.arnaud;didier.arnaud@isec-group.local;;
