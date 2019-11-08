@@ -1,0 +1,13 @@
+Lang=french
+Group=PDFCreator
+NoIcons=0
+SetupType=custom
+Components=program,ghostscript,languages,languages\english,languages\french
+Tasks=
+Printername=PDFCreator
+ServerInstallation=1
+Win9xPrinterdriver=0
+WinNtPrinterdriver=0
+Win2k32bitPrinterdriver=0
+Win2k64bitPrinterdriver=0
+Offer=1
