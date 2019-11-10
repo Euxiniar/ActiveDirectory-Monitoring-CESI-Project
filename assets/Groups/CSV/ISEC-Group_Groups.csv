@@ -1,0 +1,13 @@
+Group;Domain;Name;GroupCategory;GroupScope;Path
+iSEC-Group;isec-group.local;GRP-GRP-SEC-GLO-ADFI-ALL;Security;Global;OU=ADFI,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-GLO-BUSINESS-ALL;Security;Global;OU=Business,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-GLO-COMMUNICATION-ALL;Security;Global;OU=Communication,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-GLO-DIRECTION-ALL;Security;Global;OU=Direction,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-GLO-HR-ALL;Security;Global;OU=HR,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-LOC-ADFI_COMMON_SHARE;Security;DomainLocal;OU=ADFI,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-LOC-BUSINESS_COMMON_SHARE;Security;DomainLocal;OU=Business,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-LOC-COMMUNICATION_COMMON_SHARE;Security;DomainLocal;OU=Communication,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE;Security;DomainLocal;OU=Direction,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-LOC-HR_COMMON_SHARE;Security;DomainLocal;OU=HR,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-LOC-GROUP-COMMON-SHARE;Security;DomainLocal;OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;GRP-GRP-SEC-LOC-FOLDER-REDIRECTION;Security;DomainLocal;OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
