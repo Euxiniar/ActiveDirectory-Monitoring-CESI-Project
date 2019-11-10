@@ -1,0 +1,9 @@
+Group;Domain;Name;Path;FullPath
+iSEC-Telecom;isec-telecom.local;Global;DC=isec-telecom,DC=local;OU=Global,DC=isec-telecom,DC=local
+iSEC-Telecom;isec-telecom.local;ISEC-Telecom;OU=Global,DC=isec-telecom,DC=local;OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local
+iSEC-Telecom;isec-telecom.local;Service;OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local;OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local
+iSEC-Telecom;isec-telecom.local;Computers;OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local;OU=Computers,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local
+iSEC-Telecom;isec-telecom.local;ADFI;OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local;OU=ADFI,OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local
+iSEC-Telecom;isec-telecom.local;Communication;OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local;OU=Communication,OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local
+iSEC-Telecom;isec-telecom.local;Direction;OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local;OU=Direction,OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local
+iSEC-Telecom;isec-telecom.local;HR;OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local;OU=HR,OU=Service,OU=ISEC-Telecom,OU=Global,DC=isec-telecom,DC=local

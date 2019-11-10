@@ -1,0 +1,10 @@
+Group;Domain;Name;Path;FullPath
+iSEC-Group;isec-group.local;Global;DC=isec-group,DC=local;OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;ISEC-Group;OU=Global,DC=isec-group,DC=local;OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;Service;OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;Computers;OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;OU=Computers,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;ADFI;OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;OU=ADFI,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;Business;OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;OU=Business,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;Communication;OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;OU=Communication,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;Direction;OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;OU=Direction,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+iSEC-Group;isec-group.local;HR;OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;OU=HR,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
