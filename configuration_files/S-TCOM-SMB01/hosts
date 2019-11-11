@@ -1,0 +1,9 @@
+# /etc/hosts
+
+127.0.0.1	localhost localhost.localdomain
+192.168.31.5   S-TCOM-SMB01.isec-telecom.local S-TCOM-SMB01
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
