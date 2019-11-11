@@ -1,5 +1,5 @@
 # Run as ITCOMDOM1 Domain Admin (ITCOMDOM1\administrator) on S-GRP-AD01-ADM
-C:\Windows\System32\runas.exe /netonly /user:ITCOMDOM1\administrator powershell.exe
+#C:\Windows\System32\runas.exe /netonly /user:ITCOMDOM1\administrator powershell.exe
 
 # Import OU
 function Create-OrganizationalUnits # OK !
