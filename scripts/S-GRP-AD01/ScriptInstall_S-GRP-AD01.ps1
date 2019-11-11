@@ -397,7 +397,7 @@ function Create-BaseFolders
     # Check if the Users Roaming Profiles folder exists, and create it if it doesn't.
     if ((Test-Path -Path "$RoamingProfilesPath$") -eq $False)
     {
-            New-Item -ItemType Directory -Force -Path "$RoamingProfilesPath"
+            $result = New-Item -ItemType Directory -Force -Path "$RoamingProfilesPath" -WarningAction SilentlyContinue
             Write-Host "[SUCCESS] Created the Roaming Profiles folder ($RoamingProfilesPath)" -ForegroundColor Green
     }
     
