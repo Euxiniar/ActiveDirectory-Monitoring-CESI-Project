@@ -160,7 +160,7 @@ function Install-DHCPServer # OK !
 
 function Install-PDFCreator
 {
-$SharesPath = "C:\Shares"
+    $SharesPath = "C:\Shares"
     $PDFCreatorUri = "https://download.pdfforge.org/download/pdfcreator/PDFCreator-stable?download"
     $PDFCreatorDownloadPath = "$SharesPath\InitialServerDeploy$\Printer"
     $PDFCreatorIniUri = "https://raw.githubusercontent.com/joeldidier/ActiveDirectory-Monitoring-CESI-Project/master/assets/Software/PDFCreator/PDFCreator.inf"
