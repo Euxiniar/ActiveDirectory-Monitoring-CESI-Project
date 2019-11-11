@@ -125,7 +125,7 @@ Install-ADDSRole
 
 Write-Host "[SUCCESS] Successfully installed all the required roles ! The server will now restart."  -ForegroundColor Cyan
 pause
-Restart-Server
+Restart-Computer
 
 # And here it ends. 
 # "Is that all ? Is it over ? I'm sure something is missing !"
