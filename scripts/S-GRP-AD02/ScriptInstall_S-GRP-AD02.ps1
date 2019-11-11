@@ -1,4 +1,18 @@
-﻿$ServerName = "S-GRP-AD01"
+﻿# #############################################################################
+# 
+# Name: ScriptInstall_S-GRP-AD02.ps1
+# Comment: Installation Script and AD Insertion Script used in a School Project
+# Source: https://github.com/joeldidier/ActiveDirectory-Monitoring-CESI-Project
+#
+# Author:  Joël DIDIER (Studisys - joeldidier - joel_didier_)
+# Website: https://studisys.net
+# Date:  2019/11/11
+# Email: contact@studisys.net
+# GitHub: joeldidier (https://github.com/joeldidier)
+#
+# #############################################################################
+
+$ServerName = "S-GRP-AD01"
 $DomainName = "isec-group.local"
 $NetBIOSName = "IGRPDOM1"
 $Hostname_2 = "S-GRP-AD02"
