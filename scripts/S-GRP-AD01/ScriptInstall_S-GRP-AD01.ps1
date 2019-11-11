@@ -107,7 +107,10 @@ function Set-NetworkSettings
 
     # Set the static IPv4 address
     Write-Host [INFO] Setting IP Address to $S_GRP_AD01_IP/$Prefix and Gateway to $Gateway. -ForegroundColor Cyan
-    $result = New-NetIPAddress -InterfaceIndex $AdapterIndex -IPAddress $S_GRP_AD01_IP -DefaultGateway $Gateway -PrefixLength $Prefix -WarningAction SilentlyContinue
+     try {
+     $result = New-NetIPAddress -InterfaceIndex $AdapterIndex -IPAddress $S_GRP_AD01_IP -DefaultGateway $Gateway -PrefixLength $Prefix -WarningAction SilentlyContinue
+     } catch {
+     }
 
     # Set the DNS Servers
     Write-Host [INFO] Setting DNS Servers to $DNS1 [Primary] and $DNS2 [Secondary]. -ForegroundColor Cyan
@@ -168,8 +171,7 @@ $SharesPath = "C:\Shares"
             $result = New-Item -ItemType Directory -Force -Path "$PDFCreatorDownloadPath" -WarningAction SilentlyContinue
         }
 
-    if ((Test-Path "$PDFCreatorDownloadPath\PDFCreator.exe") -eq $False)
-    {
+
      # Download PDF Creator with BITS
     Start-BitsTransfer -Source "$PDFCreatorUri" -Destination "$PDFCreatorDownloadPath\PDFCreator.exe"
 
@@ -184,7 +186,7 @@ $SharesPath = "C:\Shares"
     pause
     Restart-Computer
     exit
-    }
+    
 }
 
 function Install-ADDomain
@@ -519,47 +521,46 @@ function Create-BaseFolders
 function Create-SMBShares
 {
 
-
-    New-SmbShare -Path "$SharesPath\Services" -Name "Services"
-    Grant-SmbShareAccess -Name "Services" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
-
-    New-SmbShare -Path "$RoamingProfilesPath" -Name "Profiles$"
-    Grant-SmbShareAccess -Name "Profiles$" -AccountName Everyone -AccessRight Full -Force
     
-    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Group" -Name "Group"
-    Grant-SmbShareAccess -Name "Group" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-GROUP-COMMON-SHARE -AccessRight Full -Force
+    $result = New-SmbShare -Path "$SharesPath\Services" -Name "Services"
+    $result = Grant-SmbShareAccess -Name "Services" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
-    New-SmbShare -Path "$SharesPath\$ServiceFolderName\HR" -Name "HR"
-    Grant-SmbShareAccess -Name "HR" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-ADFI_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+    $result = New-SmbShare -Path "$RoamingProfilesPath" -Name "Profiles$"
+    $result = Grant-SmbShareAccess -Name "Profiles$" -AccountName Everyone -AccessRight Full -Force
+    
+    $result = New-SmbShare -Path "$SharesPath\$ServiceFolderName\Group" -Name "Group"
+    $result = Grant-SmbShareAccess -Name "Group" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-GROUP-COMMON-SHARE -AccessRight Full -Force
 
-    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Direction" -Name "Direction"
-    Grant-SmbShareAccess -Name "Direction" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+    $result = New-SmbShare -Path "$SharesPath\$ServiceFolderName\HR" -Name "HR"
+    $result = Grant-SmbShareAccess -Name "HR" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-ADFI_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
-    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Business" -Name "Business"
-    Grant-SmbShareAccess -Name "Business" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-BUSINESS_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+    $result = New-SmbShare -Path "$SharesPath\$ServiceFolderName\Direction" -Name "Direction"
+    $result = Grant-SmbShareAccess -Name "Direction" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
-    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Commercial" -Name "Commercial"
-    Grant-SmbShareAccess -Name "Commercial" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMERCIAL_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+    $result = New-SmbShare -Path "$SharesPath\$ServiceFolderName\Business" -Name "Business"
+    $result = Grant-SmbShareAccess -Name "Business" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-BUSINESS_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
-    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Communication" -Name "Communication"
-    Grant-SmbShareAccess -Name "Communication" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMUNICATION_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+    $result = New-SmbShare -Path "$SharesPath\$ServiceFolderName\ADFI" -Name "ADFI"
+    $result = Grant-SmbShareAccess -Name "ADFI" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-ADFI_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
-    New-SmbShare -Path "$SharesPath\$PersonalFolderName" -Name "Personal$"
-    Grant-SmbShareAccess -Name "Personal$" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-FOLDER-REDIRECTION -AccessRight Full -Force
+    $result = New-SmbShare -Path "$SharesPath\$ServiceFolderName\Communication" -Name "Communication"
+    $result = Grant-SmbShareAccess -Name "Communication" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMUNICATION_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+
+    $result = New-SmbShare -Path "$SharesPath\$PersonalFolderName" -Name "Personal$"
+    $result = Grant-SmbShareAccess -Name "Personal$" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-FOLDER-REDIRECTION -AccessRight Full -Force
   
 
-    New-SmbShare -Path "$SharesPath\SoftDeploy$" -Name "SoftDeploy$"
-    Grant-SmbShareAccess -Name "SoftDeploy$" -AccountName Everyone -AccessRight Read -Force
+    $result = New-SmbShare -Path "$SharesPath\SoftDeploy$" -Name "SoftDeploy$"
+    $result = Grant-SmbShareAccess -Name "SoftDeploy$" -AccountName Everyone -AccessRight Read -Force
 
 
-    New-SmbShare -Path "$SharesPath\Wallpapers$" -Name "Wallpapers$"
-    Grant-SmbShareAccess -Name "Wallpapers$" -AccountName Everyone -AccessRight Read -Force
+    $result = New-SmbShare -Path "$SharesPath\Wallpapers$" -Name "Wallpapers$"
+    $result = Grant-SmbShareAccess -Name "Wallpapers$" -AccountName Everyone -AccessRight Read -Force
 
-    
+
     # Share Printer
     Set-Printer -Name "PDFCreator" -Shared $True -Published $True -ShareName "PDFCreator" -PortName "pdfcmon"
     printui /Xs /n "PDFCreator" ClientSideRender enabled
-
 }
 
 
