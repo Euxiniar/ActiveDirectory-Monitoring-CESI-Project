@@ -40,10 +40,10 @@ function SilenceOutput
 function Get-DomAdmCred
 {
     Write-Host "[PROMPT] Please enter the password of the $Domain Domain Administrator." -ForegroundColor Magenta
-    $MainCredentials = (Get-Credential IGRPDOM1\S-GRP-AD01-ADM)
-
-    Write-Host "[PROMPT] Please enter the SafeModeAdministratorPassword." -ForegroundColor Magenta
     $Password = Read-Host -AsSecureString
+
+    Write-Host "[PROMPT] Please enter the credentials of the $Domain Domain Administrator." -ForegroundColor Magenta
+    $Credentials = (Get-Credential IGRPDOM1\S-GRP-AD01-ADM)
 }
 
 function Set-NetworkSettings
@@ -58,6 +58,11 @@ function Set-NetworkSettings
     # Set the DNS Servers
     Write-Host [INFO] Setting DNS Servers to $DNS1 [Primary] and $DNS2 [Secondary]. -ForegroundColor Cyan
     $result = Set-DnsClientServerAddress -InterfaceIndex $AdapterIndex -ServerAddresses ("$DNS1","$DNS2") -WarningAction SilentlyContinue
+
+    # Enable Ping from IPv4/IPv6 addresses
+    Write-Host "[INFO] Allowing Ping requests to this server." -ForegroundColor Cyan
+    New-NetFirewallRule -DisplayName "Allow inbound ICMPv4" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow
+    New-NetFirewallRule -DisplayName "Allow inbound ICMPv6" -Direction Inbound -Protocol ICMPv6 -IcmpType 8 -Action Allow
 }
 
 
@@ -98,10 +103,9 @@ function Install-ADDSRole
     $result = Install-WindowsFeature AD-Domain-Services -IncludeManagementTools -WarningAction SilentlyContinue
     }
 
-    Write-Host "[INFO] Creating a new AD Forest (Domain Name: $DomainName - NetBIOS Name: $NetBIOSName" -ForegroundColor Cyan
-
-    # Install the ADDS role on S-GRP-AD01, create a new forest with the domain as "isec-group.local", set NETBIOS name and install DNS
-    $result = Install-ADDSForest -DomainName "$DomainName" -DomainNetbiosName "$NetBIOSName" -InstallDns:$true -NoRebootOnCompletion:$true -SafeModeAdministratorPassword $Password -Force -WarningAction SilentlyContinue
+    Write-Host "[INFO] Joining $Hostname_2 to $DomainName domain as a Secondary DC." -ForegroundColor Cyan
+    $result = Install-ADDSDomainController -CreateDnsDelegation:$false -DatabasePath 'C:\Windows\NTDS' -DomainName "$DomainName" -InstallDns:$true -LogPath 'C:\Windows\NTDS' -NoGlobalCatalog:$false -SiteName 'Default-First-Site-Name' -SysvolPath 'C:\Windows\SYSVOL' -NoRebootOnCompletion:$true -Force:$true -WarningAction SilentlyContinue
+   
 }
 
 
