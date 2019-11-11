@@ -100,8 +100,7 @@ function Get-DomAdmCred # OK !
 
 function Set-NetworkSettings
 {
-    $result = (Get-NetIPAddress).IPAddress -Like "192.168.31.3"
-    if ($result -eq $NULL)
+    try
     {
     Write-Host [INFO] Setting up the Network Interface... -ForegroundColor Cyan
     $AdapterIndex = (Get-NetAdapter -WarningAction SilentlyContinue).ifIndex
@@ -118,6 +117,8 @@ function Set-NetworkSettings
     Write-Host "[INFO] Allowing Ping requests to this server." -ForegroundColor Cyan
     $result = New-NetFirewallRule -DisplayName "Allow inbound ICMPv4" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow -WarningAction SilentlyContinue
     $result = New-NetFirewallRule -DisplayName "Allow inbound ICMPv6" -Direction Inbound -Protocol ICMPv6 -IcmpType 8 -Action Allow -WarningAction SilentlyContinue
+    } catch {
+
     }
 }
 
