@@ -409,8 +409,8 @@ function Create-Users # OK !
         foreach ($ADGroup in $Groups)
         {
             # We add the user to this group
-            Write-Host [INFO] Adding $User.'DisplayNameSurname' $($Group.'Login') into $ADGroup. -ForegroundColor Cyan
-            Add-ADGroupMember -Identity $ADGroup -Members $Group.'Login'
+            Write-Host [INFO] Adding $User.'DisplayNameSurname' $($User.'Login') into $ADGroup. -ForegroundColor Cyan
+            Add-ADGroupMember -Identity $ADGroup -Members $User.'Login'
         }
     }
         
