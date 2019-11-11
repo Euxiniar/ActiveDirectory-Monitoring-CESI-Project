@@ -227,10 +227,11 @@ function Install-ADDomain
         exit
     }
     # Configure the DNS Conditional Forwarding Zone (redirect all requests for isec-telecom.local to the correct DNS server)
-    Write-Host "[INFO] Creating a DNS entry to redirect all DNS requests for isec-telecom.local domain to $S_TCOM_SMB01_IP" -ForegroundColor Cyan
     try
     {
+        
         $result = Add-DnsServerConditionalForwarderZone -Name "isec-telecom.local" -ReplicationScope "Forest" -MasterServers "$S_TCOM_SMB01_IP" -WarningAction SilentlyContinue
+    Write-Host "[INFO] Creating a DNS entry to redirect all DNS requests for isec-telecom.local domain to $S_TCOM_SMB01_IP" -ForegroundColor Cyan
     } catch
     {
 
@@ -281,7 +282,7 @@ function Create-OrganizationalUnits # OK !
 
     }
 
-    Write-Host "[INFO] Added $OUCount group(s) into Active Directory." -ForegroundColor Cyan
+    Write-Host "[INFO] Added $OUCount Organizational Unit(s) into Active Directory." -ForegroundColor Cyan
 }
 
 
@@ -338,14 +339,15 @@ function Create-Groups # OK !
       # Do nothing.
     } else {
         # We put the content of the field in a $Groups object, and we set the delimiter to ","
-        $Groups = $User.'Group' -split ","
+        $Groups = $Group.'Group' -split ","
 
         # For each group in the field
         foreach ($ADGroup in $Groups)
         {
             # We add the user to this group
-            Write-Host [INFO] Adding $User.'DisplayNameSurname' $($Group.'Login') into $ADGroup. -ForegroundColor Cyan
-            Add-ADGroupMember -Identity $ADGroup -Members $User.'Login'
+            Write-Host [INFO] Adding $ADGroup into  $Group.'Name'. -ForegroundColor Cyan
+            Add-ADGroupMember -Identity $Group.'Name' -Members $ADGroup
+
         }
     }
         
@@ -403,13 +405,12 @@ function Create-Users # OK !
     } else {
         # We put the content of the field in a $Groups object, and we set the delimiter to ","
         $Groups = $User.'Group' -split ","
-
         # For each group in the field
         foreach ($ADGroup in $Groups)
         {
             # We add the user to this group
             Write-Host [INFO] Adding $User.'DisplayNameSurname' $($Group.'Login') into $ADGroup. -ForegroundColor Cyan
-            Add-ADGroupMember -Identity $ADGroup -Members $User.'Login'
+            Add-ADGroupMember -Identity $ADGroup -Members $Group.'Login'
         }
     }
         
