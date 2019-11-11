@@ -122,3 +122,9 @@ Install-ADDSRole
 Write-Host "[SUCCESS] Successfully installed all the required roles ! The server will now restart."  -ForegroundColor Cyan
 pause
 Restart-Server
+
+# And here it ends. 
+# "Is that all ? Is it over ? I'm sure something is missing !"
+#
+# No. It's all done. You've witnessed how PowerShell commands can be so powerful.
+# Learn PowerShell, just drop that GUI away (✿◡‿◡)
