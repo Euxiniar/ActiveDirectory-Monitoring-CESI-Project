@@ -17,12 +17,12 @@ $NewAdminName = "S-GRP-AD01-ADM"
 $DomainName = "isec-group.local"
 $NetBIOSName = "IGRPDOM1"
 $SharesPath = "C:\Shares"
-$RoamingProfilesFolderName = "Profiles"
-$RoamingProfilesShareName = "Profiles"
+$RoamingProfilesFolderName = "Profiles$"
+$RoamingProfilesShareName = "Profiles$"
 $RoamingProfilesPath = "$SharesPath\$RoamingProfilesFolderName"
-$PersonalFoldersDirectory = "$SharesPath\Personal"
+$PersonalFoldersDirectory = "$SharesPath\Personal$"
 $ServiceFolderName = "Services"
-$PersonalFolderName = "Personal"
+$PersonalFolderName = "Personal$"
 
 $Gateway = "192.168.31.2"
 $Prefix = "24"
@@ -156,18 +156,20 @@ function Install-DHCPServer # OK !
 
 function Install-PDFCreator
 {
+$SharesPath = "C:\Shares"
     $PDFCreatorUri = "https://download.pdfforge.org/download/pdfcreator/PDFCreator-stable?download"
-    $PDFCreatorDownloadPath = "$SharesPath\InitialServerDeploy\Printer"
+    $PDFCreatorDownloadPath = "$SharesPath\InitialServerDeploy$\Printer"
     $PDFCreatorIniUri = "https://raw.githubusercontent.com/joeldidier/ActiveDirectory-Monitoring-CESI-Project/master/assets/Software/PDFCreator/PDFCreator.inf"
-
 
     # [1/2] Check if the download path exists. If not, create it.
         if ((Test-Path -Path "$PDFCreatorDownloadPath") -eq $False)
         {
-            New-Item -ItemType Directory -Force -Path "$PDFCreatorDownloadPath" > $NULL
+            $result = New-Item -ItemType Directory -Force -Path "$PDFCreatorDownloadPath" -WarningAction SilentlyContinue
         }
 
-    # Download PDF Creator with BITS
+    if ((Test-Path "$PDFCreatorDownloadPath\PDFCreator.exe") -eq $False)
+    {
+     # Download PDF Creator with BITS
     Start-BitsTransfer -Source "$PDFCreatorUri" -Destination "$PDFCreatorDownloadPath\PDFCreator.exe"
 
     # Download the configuration file
@@ -176,6 +178,12 @@ function Install-PDFCreator
     # Install PDF Creator 'silently' (No popup, no restart)
     cd $PDFCreatorDownloadPath
     ./PDFCreator.exe /LOADINF="PDFCreator.inf" /VERYSILENT /NORESTART
+
+    Write-Host "[PROMPT] The server need to be restarted. Please restart the script once the server has booted back up." -ForegroundColor Magenta
+    pause
+    Restart-Computer
+    exit
+    }
 }
 
 function Install-ADDomain
@@ -212,7 +220,7 @@ function Install-ADDomain
 
     if ($restartflag -eq "1")
     {
-        Install-PDFCreator # We take the occasion to install PDFCreator, since it will also require a restart.
+
         Write-Host "[PROMPT] The server need to be restarted. Please restart the script once the server has booted back up." -ForegroundColor Magenta
         pause
         Restart-Computer
@@ -318,9 +326,27 @@ function Create-Groups # OK !
 
         }
 
+    # If the "Group" field is empty
+    if ([string]::IsNullOrEmpty($Group.'Group'))
+    {
+      # Do nothing.
+    } else {
+        # We put the content of the field in a $Groups object, and we set the delimiter to ","
+        $Groups = $User.'Group' -split ","
+
+        # For each group in the field
+        foreach ($ADGroup in $Groups)
+        {
+            # We add the user to this group
+            Write-Host [INFO] Adding $User.'DisplayNameSurname' $($Group.'Login') into $ADGroup. -ForegroundColor Cyan
+            Add-ADGroupMember -Identity $ADGroup -Members $User.'Login'
+        }
     }
-       
+        
     }
+
+    }
+         
    
 }
 
@@ -413,7 +439,7 @@ function Create-BaseFolders
     if ((Test-Path -Path "$SharesPath\$PersonalFolderName$") -eq $False)
     {
        $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$PersonalFolderName" -WarningAction SilentlyContinue
-       Write-Host "[SUCCESS] Created the Folder Redirection folder ($SharesPath\$PersonalFolderName$)" -ForegroundColor Green
+       Write-Host "[SUCCESS] Created the Folder Redirection folder ($SharesPath\$PersonalFolderName)" -ForegroundColor Green
     }
 
 
