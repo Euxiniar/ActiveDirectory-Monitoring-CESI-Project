@@ -228,7 +228,13 @@ function Install-ADDomain
     }
     # Configure the DNS Conditional Forwarding Zone (redirect all requests for isec-telecom.local to the correct DNS server)
     Write-Host "[INFO] Creating a DNS entry to redirect all DNS requests for isec-telecom.local domain to $S_TCOM_SMB01_IP" -ForegroundColor Cyan
-    $result = Add-DnsServerConditionalForwarderZone -Name "isec-telecom.local" -ReplicationScope "Forest" -MasterServers "$S_TCOM_SMB01_IP" -WarningAction SilentlyContinue
+    try
+    {
+        $result = Add-DnsServerConditionalForwarderZone -Name "isec-telecom.local" -ReplicationScope "Forest" -MasterServers "$S_TCOM_SMB01_IP" -WarningAction SilentlyContinue
+    } catch
+    {
+
+    }
 }
 
 
@@ -421,7 +427,7 @@ function Create-Users # OK !
 function Create-BaseFolders
 {
     # Check if the Users Roaming Profiles folder exists, and create it if it doesn't.
-    if ((Test-Path -Path "$RoamingProfilesPath$") -eq $False)
+    if ((Test-Path -Path "$RoamingProfilesPath") -eq $False)
     {
             $result = New-Item -ItemType Directory -Force -Path "$RoamingProfilesPath" -WarningAction SilentlyContinue
             Write-Host "[SUCCESS] Created the Roaming Profiles folder ($RoamingProfilesPath)" -ForegroundColor Green
@@ -436,7 +442,7 @@ function Create-BaseFolders
 
 
     # Create Users' Personal Folders
-    if ((Test-Path -Path "$SharesPath\$PersonalFolderName$") -eq $False)
+    if ((Test-Path -Path "$SharesPath\$PersonalFolderName") -eq $False)
     {
        $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$PersonalFolderName" -WarningAction SilentlyContinue
        Write-Host "[SUCCESS] Created the Folder Redirection folder ($SharesPath\$PersonalFolderName)" -ForegroundColor Green
@@ -460,8 +466,8 @@ function Create-BaseFolders
         # Create Wallpapers Folder
     if ((Test-Path -Path "$SharesPath\Wallpapers$") -eq $False)
     {
-       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\InitialServerDeploy$" -WarningAction SilentlyContinue
-       Write-Host "[SUCCESS] Created the Wallpapers folder ($SharesPath\InitialServerDeploy$)" -ForegroundColor Green
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\Wallpapers$" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Wallpapers folder ($SharesPath\Wallpapers$)" -ForegroundColor Green
     }
 
 }
