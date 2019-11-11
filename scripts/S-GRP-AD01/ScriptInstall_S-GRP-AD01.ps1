@@ -518,6 +518,10 @@ function Create-BaseFolders
 function Create-SMBShares
 {
 
+
+    New-SmbShare -Path "$SharesPath\Services" -Name "Services"
+    Grant-SmbShareAccess -Name "Services" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+
     New-SmbShare -Path "$RoamingProfilesPath" -Name "Profiles$"
     Grant-SmbShareAccess -Name "Profiles$" -AccountName Everyone -AccessRight Full -Force
     
@@ -525,19 +529,19 @@ function Create-SMBShares
     Grant-SmbShareAccess -Name "Group" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-GROUP-COMMON-SHARE -AccessRight Full -Force
 
     New-SmbShare -Path "$SharesPath\$ServiceFolderName\HR" -Name "HR"
-    Grant-SmbShareAccess -Name "HR" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-ADFI_COMMON_SHARE -AccessRight Full -Force
+    Grant-SmbShareAccess -Name "HR" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-ADFI_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
     New-SmbShare -Path "$SharesPath\$ServiceFolderName\Direction" -Name "Direction"
     Grant-SmbShareAccess -Name "Direction" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
     New-SmbShare -Path "$SharesPath\$ServiceFolderName\Business" -Name "Business"
-    Grant-SmbShareAccess -Name "Business" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-BUSINESS_COMMON_SHARE -AccessRight Full -Force
+    Grant-SmbShareAccess -Name "Business" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-BUSINESS_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
     New-SmbShare -Path "$SharesPath\$ServiceFolderName\Commercial" -Name "Commercial"
-    Grant-SmbShareAccess -Name "Commercial" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMERCIAL_COMMON_SHARE -AccessRight Full -Force
+    Grant-SmbShareAccess -Name "Commercial" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMERCIAL_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
     New-SmbShare -Path "$SharesPath\$ServiceFolderName\Communication" -Name "Communication"
-    Grant-SmbShareAccess -Name "Communication" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMUNICATION_COMMON_SHARE -AccessRight Full -Force
+    Grant-SmbShareAccess -Name "Communication" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMUNICATION_COMMON_SHARE,IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
 
     New-SmbShare -Path "$SharesPath\$PersonalFolderName" -Name "Personal$"
     Grant-SmbShareAccess -Name "Personal$" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-FOLDER-REDIRECTION -AccessRight Full -Force
