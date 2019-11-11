@@ -104,7 +104,7 @@ function Install-ADDSRole
     }
 
     Write-Host "[INFO] Joining $Hostname_2 to $DomainName domain as a Secondary DC." -ForegroundColor Cyan
-    $result = Install-ADDSDomainController -CreateDnsDelegation:$false -DatabasePath 'C:\Windows\NTDS' -DomainName "$DomainName" -InstallDns:$true -LogPath 'C:\Windows\NTDS' -NoGlobalCatalog:$false -SiteName 'Default-First-Site-Name' -SysvolPath 'C:\Windows\SYSVOL' -NoRebootOnCompletion:$true -Force:$true -WarningAction SilentlyContinue
+    $result = Install-ADDSDomainController -CreateDnsDelegation:$false -DatabasePath 'C:\Windows\NTDS' -DomainName "$DomainName" -InstallDns:$true -LogPath 'C:\Windows\NTDS' -NoGlobalCatalog:$false -SiteName 'Default-First-Site-Name' -SysvolPath 'C:\Windows\SYSVOL' -NoRebootOnCompletion:$true -Force:$true -Credential (Get-Credential) -WarningAction SilentlyContinue
    
 }
 
