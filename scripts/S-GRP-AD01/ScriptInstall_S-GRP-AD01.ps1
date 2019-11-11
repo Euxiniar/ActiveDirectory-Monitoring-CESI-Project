@@ -243,7 +243,7 @@ function Install-ADDomain
 
 function Create-OrganizationalUnits # OK !
 {
-    $PathToOUCSV = "$SharesPath\InitialServerDeploy\OUs\CSV\"
+    $PathToOUCSV = "$SharesPath\InitialServerDeploy$\OUs\CSV\"
     $OUCSVName = "ISEC-Group_OUs.csv"
     $FullOUCSVPath = $PathToOUCSV + $OUCSVName
     $URLtoOUCSV = "https://raw.githubusercontent.com/joeldidier/ActiveDirectory-Monitoring-CESI-Project/master/assets/OU/CSV/ISEC-Group_OUs.csv"
@@ -290,7 +290,7 @@ function Create-Groups # OK !
 {
 
 
-    $PathToGroupsCSV = "$SharesPath\InitialServerDeploy\Groups\CSV\"
+    $PathToGroupsCSV = "$SharesPath\InitialServerDeploy$\Groups\CSV\"
     $GroupsCSVName = "ISEC-Group_Groups.csv"
     $FullGroupsCSVPath = $PathToGroupsCSV + $GroupsCSVName
     $URLtoGroupsCSV = "https://raw.githubusercontent.com/joeldidier/ActiveDirectory-Monitoring-CESI-Project/master/assets/Groups/CSV/ISEC-Group_Groups.csv"
@@ -441,6 +441,48 @@ function Create-BaseFolders
        Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName)" -ForegroundColor Green
     }
 
+        # Create Common Group Folder
+    if ((Test-Path -Path "$SharesPath\$ServiceFolderName\Group") -eq $False)
+    {
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName\Group" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName\Group)" -ForegroundColor Green
+    }
+
+            # Create Direction Folder
+    if ((Test-Path -Path "$SharesPath\$ServiceFolderName\Direction") -eq $False)
+    {
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName\Direction" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName\Direction)" -ForegroundColor Green
+    }
+
+                # Create Business Folder
+    if ((Test-Path -Path "$SharesPath\$ServiceFolderName\Business") -eq $False)
+    {
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName\Business" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName\Business)" -ForegroundColor Green
+    }
+
+                # Create ADFI Folder
+    if ((Test-Path -Path "$SharesPath\$ServiceFolderName\ADFI") -eq $False)
+    {
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName\ADFI" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName\ADFI)" -ForegroundColor Green
+    }
+
+                # Create HR Folder
+    if ((Test-Path -Path "$SharesPath\$ServiceFolderName\HR") -eq $False)
+    {
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName\HR" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName\HR)" -ForegroundColor Green
+    }
+
+                # Create Communication Folder
+    if ((Test-Path -Path "$SharesPath\$ServiceFolderName\Communication") -eq $False)
+    {
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName\Communication" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName\Communication)" -ForegroundColor Green
+    }
+
 
     # Create Users' Personal Folders
     if ((Test-Path -Path "$SharesPath\$PersonalFolderName") -eq $False)
@@ -473,17 +515,43 @@ function Create-BaseFolders
 
 }
 
-function Create-SMBShare
+function Create-SMBShares
 {
-    # Create a SMB Share for the Roaming Profiles folder
-    New-SmbShare -Path "$RoamingProfilesPath" -Name "$RoamingProfilesShareName"
 
-    # Assign Permissions for Roaming Profiles folder
-    Grant-SmbShareAccess -Name "$RoamingProfilesShareName" -AccountName Everyone -AccessRight Full -Force
+    New-SmbShare -Path "$RoamingProfilesPath" -Name "Profiles$"
+    Grant-SmbShareAccess -Name "Profiles$" -AccountName Everyone -AccessRight Full -Force
+    
+    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Group" -Name "Group"
+    Grant-SmbShareAccess -Name "Group" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-GROUP-COMMON-SHARE -AccessRight Full -Force
 
+    New-SmbShare -Path "$SharesPath\$ServiceFolderName\HR" -Name "HR"
+    Grant-SmbShareAccess -Name "HR" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-ADFI_COMMON_SHARE -AccessRight Full -Force
+
+    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Direction" -Name "Direction"
+    Grant-SmbShareAccess -Name "Direction" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-DIRECTION_COMMON_SHARE -AccessRight Full -Force
+
+    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Business" -Name "Business"
+    Grant-SmbShareAccess -Name "Business" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-BUSINESS_COMMON_SHARE -AccessRight Full -Force
+
+    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Commercial" -Name "Commercial"
+    Grant-SmbShareAccess -Name "Commercial" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMERCIAL_COMMON_SHARE -AccessRight Full -Force
+
+    New-SmbShare -Path "$SharesPath\$ServiceFolderName\Communication" -Name "Communication"
+    Grant-SmbShareAccess -Name "Communication" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-COMMUNICATION_COMMON_SHARE -AccessRight Full -Force
+
+    New-SmbShare -Path "$SharesPath\$PersonalFolderName" -Name "Personal$"
+    Grant-SmbShareAccess -Name "Personal$" -AccountName IGRPDOM1\GRP-GRP-SEC-LOC-FOLDER-REDIRECTION -AccessRight Full -Force
+  
+
+    New-SmbShare -Path "$SharesPath\SoftDeploy$" -Name "SoftDeploy$"
+    Grant-SmbShareAccess -Name "SoftDeploy$" -AccountName Everyone -AccessRight Read -Force
+
+
+    New-SmbShare -Path "$SharesPath\Wallpapers$" -Name "Wallpapers$"
+    Grant-SmbShareAccess -Name "Wallpapers$" -AccountName Everyone -AccessRight Read -Force
 
     
-
+    # Share Printer
     Set-Printer -Name "PDFCreator" -Shared $True -Published $True -ShareName "PDFCreator" -PortName "pdfcmon"
     printui /Xs /n "PDFCreator" ClientSideRender enabled
 
@@ -500,7 +568,7 @@ function Create-SMBShare
 function Download-7Zip
 {
     $7ZipUri = "https://www.7-zip.org/a/7z1900-x64.msi" # PLEASE USE 7-ZIP MSI INSTALLER !
-    $7ZipDownloadPath = "$SharesPath\SoftDeploy\7-Zip"
+    $7ZipDownloadPath = "$SharesPath\SoftDeploy$\7-Zip"
 
         # [1/2] Check if the download path exists. If not, create it.
         if ((Test-Path -Path "$7ZipDownloadPath") -eq $False)
@@ -567,7 +635,7 @@ redircmp OU=Computers,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
 
 
 # NOK - Create SMB Shares for Folders & Printers
-#Create-SMBShares
+Create-SMBShares
 
 
 # NOK - Configure and Deploy all GPO.
