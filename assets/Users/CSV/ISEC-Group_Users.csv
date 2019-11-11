@@ -1,5 +1,5 @@
 Group;Domain;Name;Surname;DisplayName;DisplaySurname;DisplayNameSurname;Login;Full-Login;UserPath;Group
-iSEC-Group;isec-group.local;oliver;komski;Oliver;KOMSKI;Oliver KOMSKI;oliver.komski;oliver.komski@isec-group.local;OU;GRP-GRP-SEC-GLO-DIRECTION-ALL
+iSEC-Group;isec-group.local;oliver;komski;Oliver;KOMSKI;Oliver KOMSKI;oliver.komski;oliver.komski@isec-group.local;OU=Direction,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;GRP-GRP-SEC-GLO-DIRECTION-ALL
 iSEC-Group;isec-group.local;daphne;meynot;Daphne;MEYNOT;Daphne MEYNOT;daphne.meynot;daphne.meynot@isec-group.local;OU=Direction,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;GRP-GRP-SEC-GLO-DIRECTION-ALL
 iSEC-Group;isec-group.local;julie;bertali;Julie;BERTALI;Julie BERTALI;julie.bertali;julie.bertali@isec-group.local;OU=Business,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;GRP-GRP-SEC-GLO-BUSINESS-ALL
 iSEC-Group;isec-group.local;yves;tyrael;Yves;TYRAEL;Yves TYRAEL;yves.tyrael;yves.tyrael@isec-group.local;OU=Business,OU=Service,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local;GRP-GRP-SEC-GLO-BUSINESS-ALL
