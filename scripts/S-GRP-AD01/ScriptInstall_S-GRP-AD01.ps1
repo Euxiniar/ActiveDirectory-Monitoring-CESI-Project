@@ -478,6 +478,10 @@ Create-Groups
 # OK - Create Users
 Create-Users
 
+# Change default OU for Computers Object
+redircmp OU=Computers,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+
+
 # NOK - Configure and Deploy all GPO.
 #Configure-GPO
 
