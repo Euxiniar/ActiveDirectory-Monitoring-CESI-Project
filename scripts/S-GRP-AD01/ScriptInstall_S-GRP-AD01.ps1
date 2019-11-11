@@ -29,7 +29,23 @@ $Prefix = "24"
 $S_GRP_AD01_IP = "192.168.31.3"
 $S_GRP_AD02_IP = "192.168.31.4"
 $S_TCOM_SMB01_IP = "192.168.31.5"
-
+$ServerName = "S-GRP-AD01"
+$DomainName = "isec-group.local"
+$NetBIOSName = "IGRPDOM1"
+$Hostname_2 = "S-GRP-AD02"
+$NetBIOSDOM = "IGRPDOM1"
+$Domain = "isec-group.local"
+$S_GRP_AD01_IP = "192.168.31.3"
+$S_GRP_AD02_IP = "192.168.31.4"
+$Gateway = "192.168.31.2"
+$Prefix = "24"
+$DNS1 = "192.168.31.3"
+$DNS2 = "1.1.1.1"
+$SubnetMask = "255.255.255.0"
+$StartRange = "192.168.31.21"
+$EndRange = "192.168.31.253"
+$DHCPPoolName = "ISEC User Devices"
+$dnsList = $DNS1,$DNS2
 
 function SilenceOutput
 {
@@ -64,6 +80,7 @@ function Set-PreReq # OK ?
         Write-Host "[PROMPT] The server need to be restarted. Please restart the script once the server has booted back up." -ForegroundColor Magenta
         pause
         Restart-Computer
+        exit
     }
 
 }
@@ -95,8 +112,8 @@ function Set-NetworkSettings
     
     # Enable Ping from IPv4/IPv6 addresses
     Write-Host "[INFO] Allowing Ping requests to this server." -ForegroundColor Cyan
-    New-NetFirewallRule -DisplayName "Allow inbound ICMPv4" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow
-    New-NetFirewallRule -DisplayName "Allow inbound ICMPv6" -Direction Inbound -Protocol ICMPv6 -IcmpType 8 -Action Allow
+    $result = New-NetFirewallRule -DisplayName "Allow inbound ICMPv4" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow -WarningAction SilentlyContinue
+    $result = New-NetFirewallRule -DisplayName "Allow inbound ICMPv6" -Direction Inbound -Protocol ICMPv6 -IcmpType 8 -Action Allow -WarningAction SilentlyContinue
 }
 
 function Install-DHCPServer # OK !
@@ -137,6 +154,9 @@ function Install-ADDomain
     # Install the ADDS Services
     $result = Install-WindowsFeature AD-Domain-Services -IncludeManagementTools -WarningAction SilentlyContinue
     }
+
+    Write-Host "[PROMPT] Please enter the new password for the Domain Administrator." -ForegroundColor Magenta
+    $Password = Read-Host -AsSecureString
 
     Write-Host "[INFO] Creating a new AD Forest (Domain Name: $DomainName - NetBIOS Name: $NetBIOSName)" -ForegroundColor Cyan
 
@@ -489,3 +509,9 @@ redircmp OU=Computers,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
 Write-Host "Finished. You can now try the brand new User accounts !"
 pause
 exit
+
+# And here it ends. 
+# "Is that all ? Is it over ? I'm sure something is missing !"
+#
+# No. It's all done. You've witnessed how PowerShell commands can be so powerful.
+# Learn PowerShell, just drop that GUI away (✿◡‿◡)
