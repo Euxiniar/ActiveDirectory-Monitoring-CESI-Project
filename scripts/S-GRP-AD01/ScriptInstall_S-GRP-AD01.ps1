@@ -61,6 +61,7 @@ function Set-PreReq # OK ?
     # Rename Server Name
     if ($env:computername -ne "$ServerName")
     {
+        Write-Host "[INFO] Changing Hostname to $ServerName..." -ForegroundColor Cyan
         $result = Rename-Computer -NewName "$ServerName" -Force -Passthru -WarningAction SilentlyContinue
         $restartflag = 1
     }
@@ -71,6 +72,7 @@ function Set-PreReq # OK ?
     {
 
     } else {
+        Write-Host "[INFO] Changing 'Administrator' to $NewAdminName..." -ForegroundColor Cyan
         $result = Rename-LocalUser -Name "Administrator" -NewName "$NewAdminName" -WarningAction SilentlyContinue
         $restartflag = 1
     }
@@ -98,7 +100,9 @@ function Get-DomAdmCred # OK !
 
 function Set-NetworkSettings
 {
-
+    $result = (Get-NetIPAddress).IPAddress -Like "192.168.31.3"
+    if ($result -eq $NULL)
+    {
     Write-Host [INFO] Setting up the Network Interface... -ForegroundColor Cyan
     $AdapterIndex = (Get-NetAdapter -WarningAction SilentlyContinue).ifIndex
 
@@ -114,6 +118,7 @@ function Set-NetworkSettings
     Write-Host "[INFO] Allowing Ping requests to this server." -ForegroundColor Cyan
     $result = New-NetFirewallRule -DisplayName "Allow inbound ICMPv4" -Direction Inbound -Protocol ICMPv4 -IcmpType 8 -Action Allow -WarningAction SilentlyContinue
     $result = New-NetFirewallRule -DisplayName "Allow inbound ICMPv6" -Direction Inbound -Protocol ICMPv6 -IcmpType 8 -Action Allow -WarningAction SilentlyContinue
+    }
 }
 
 function Install-DHCPServer # OK !
@@ -131,15 +136,47 @@ function Install-DHCPServer # OK !
 
 
     # Set the IPv4 range
+    $result = Get-DhcpServerV4Scope
+    if ($result -eq $NULL){
     Write-Host "[INFO] Setting up the DHCP Pool $DHCPPoolName ($StartRange to $EndRange, Mask $SubnetMask)" -ForegroundColor Cyan
-    $result = Add-DhcpServerV4Scope -Name "$DHCPPoolName" -StartRange $StartRange -EndRange $EndRange -SubnetMask $SubnetMask -WarningAction SilentlyContinue
+        $result = Add-DhcpServerV4Scope -Name "$DHCPPoolName" -StartRange $StartRange -EndRange $EndRange -SubnetMask $SubnetMask -WarningAction SilentlyContinue
+    }
+    
 
     # Set the DNS Server & Router Address
-    Write-Host "[INFO] Setting up the DNS $DNS1 and $DNS2 for DHCP Clients (Gateway: $Gateway)" -ForegroundColor Cyan
+    $result = Get-DhcpServerV4OptionValue
+    if ($result -eq $NULL)
+    {
+     Write-Host "[INFO] Setting up the DNS $DNS1 and $DNS2 for DHCP Clients (Gateway: $Gateway)" -ForegroundColor Cyan
     $result = Set-DhcpServerV4OptionValue -DnsServer $dnsList -Router $Gateway -Force -PassThru -WarningAction SilentlyContinue
+    }
+   
 
 }
 
+function Install-PDFCreator
+{
+    $PDFCreatorUri = "https://download.pdfforge.org/download/pdfcreator/PDFCreator-stable?download"
+    $PDFCreatorDownloadPath = "$SharesPath\InitialServerDeploy\Printer"
+    $PDFCreatorIniUri = "https://raw.githubusercontent.com/joeldidier/ActiveDirectory-Monitoring-CESI-Project/master/assets/Software/PDFCreator/PDFCreator.inf"
+
+
+    # [1/2] Check if the download path exists. If not, create it.
+        if ((Test-Path -Path "$PDFCreatorDownloadPath") -eq $False)
+        {
+            New-Item -ItemType Directory -Force -Path "$PDFCreatorDownloadPath" > $NULL
+        }
+
+    # Download PDF Creator with BITS
+    Start-BitsTransfer -Source "$PDFCreatorUri" -Destination "$PDFCreatorDownloadPath\PDFCreator.exe"
+
+    # Download the configuration file
+    Start-BitsTransfer -Source "$PDFCreatorIniUri" -Destination "$PDFCreatorDownloadPath\PDFCreator.inf"
+
+    # Install PDF Creator 'silently' (No popup, no restart)
+    cd $PDFCreatorDownloadPath
+    ./PDFCreator.exe /LOADINF="PDFCreator.inf" /VERYSILENT /NORESTART
+}
 
 function Install-ADDomain
 {
@@ -153,17 +190,34 @@ function Install-ADDomain
 
     # Install the ADDS Services
     $result = Install-WindowsFeature AD-Domain-Services -IncludeManagementTools -WarningAction SilentlyContinue
+
+    $restartflag = "1"
     }
 
     Write-Host "[PROMPT] Please enter the new password for the Domain Administrator." -ForegroundColor Magenta
     $Password = Read-Host -AsSecureString
 
-    Write-Host "[INFO] Creating a new AD Forest (Domain Name: $DomainName - NetBIOS Name: $NetBIOSName)" -ForegroundColor Cyan
+    
 
     # Install the ADDS role on S-GRP-AD01, create a new forest with the domain as "isec-group.local", set NETBIOS name and install DNS
-    $result = Install-ADDSForest -DomainName "$DomainName" -DomainNetbiosName "$NetBIOSName" -InstallDns:$true -NoRebootOnCompletion:$true -SafeModeAdministratorPassword $Password -WarningAction SilentlyContinue
+    try { 
+        $result = Get-ADDomain
+    } catch {
+    Write-Host "[INFO] Creating a new AD Forest (Domain Name: $DomainName - NetBIOS Name: $NetBIOSName)" -ForegroundColor Cyan
+     $result = Install-ADDSForest -DomainName "$DomainName" -DomainNetbiosName "$NetBIOSName" -InstallDns:$true -NoRebootOnCompletion:$true -SafeModeAdministratorPassword $Password -Force -WarningAction SilentlyContinue
+    $restartflag = "1"
+    }
 
+    
 
+    if ($restartflag -eq "1")
+    {
+        Install-PDFCreator # We take the occasion to install PDFCreator, since it will also require a restart.
+        Write-Host "[PROMPT] The server need to be restarted. Please restart the script once the server has booted back up." -ForegroundColor Magenta
+        pause
+        Restart-Computer
+        exit
+    }
     # Configure the DNS Conditional Forwarding Zone (redirect all requests for isec-telecom.local to the correct DNS server)
     Write-Host "[INFO] Creating a DNS entry to redirect all DNS requests for isec-telecom.local domain to $S_TCOM_SMB01_IP" -ForegroundColor Cyan
     $result = Add-DnsServerConditionalForwarderZone -Name "isec-telecom.local" -ReplicationScope "Forest" -MasterServers "$S_TCOM_SMB01_IP" -WarningAction SilentlyContinue
@@ -350,33 +404,38 @@ function Create-BaseFolders
     # Create Services Common Folders
     if ((Test-Path -Path "$SharesPath\$ServiceFolderName") -eq $False)
     {
-       New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName" > $NULL
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$ServiceFolderName" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Services Common folder ($SharesPath\$ServiceFolderName)" -ForegroundColor Green
     }
 
 
     # Create Users' Personal Folders
     if ((Test-Path -Path "$SharesPath\$PersonalFolderName$") -eq $False)
     {
-       New-Item -ItemType Directory -Force -Path "$SharesPath\$PersonalFolderName" > $NULL
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\$PersonalFolderName" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Folder Redirection folder ($SharesPath\$PersonalFolderName$)" -ForegroundColor Green
     }
 
 
     # Create Programs Deployment Folder
     if ((Test-Path -Path "$SharesPath\SoftDeploy$") -eq $False)
     {
-       New-Item -ItemType Directory -Force -Path "$SharesPath\SoftDeploy$" > $NULL
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\SoftDeploy$" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Software Deployment folder ($SharesPath\SoftDeploy$)" -ForegroundColor Green
     }
 
     # Create Initial Server Deploy Folder
     if ((Test-Path -Path "$SharesPath\InitialServerDeploy$") -eq $False)
     {
-       New-Item -ItemType Directory -Force -Path "$SharesPath\InitialServerDeploy$" > $NULL
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\InitialServerDeploy$" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Initial Server Deployment folder ($SharesPath\InitialServerDeploy$)" -ForegroundColor Green
     }
 
         # Create Wallpapers Folder
     if ((Test-Path -Path "$SharesPath\Wallpapers$") -eq $False)
     {
-       New-Item -ItemType Directory -Force -Path "$SharesPath\InitialServerDeploy$" > $NULL
+       $result = New-Item -ItemType Directory -Force -Path "$SharesPath\InitialServerDeploy$" -WarningAction SilentlyContinue
+       Write-Host "[SUCCESS] Created the Wallpapers folder ($SharesPath\InitialServerDeploy$)" -ForegroundColor Green
     }
 
 }
@@ -388,47 +447,22 @@ function Create-SMBShare
 
     # Assign Permissions for Roaming Profiles folder
     Grant-SmbShareAccess -Name "$RoamingProfilesShareName" -AccountName Everyone -AccessRight Full -Force
-}
 
 
-
-
-
-
-
-function Install-PDFCreator
-{
-    $PDFCreatorUri = "https://download.pdfforge.org/download/pdfcreator/PDFCreator-stable?download"
-    $PDFCreatorDownloadPath = "$SharesPath\InitialServerDeploy\Printer"
-    $PDFCreatorIniUri = "https://raw.githubusercontent.com/joeldidier/ActiveDirectory-Monitoring-CESI-Project/master/assets/Software/PDFCreator/PDFCreator.inf"
-
-
-    # [1/2] Check if the download path exists. If not, create it.
-        if ((Test-Path -Path "$PDFCreatorDownloadPath") -eq $False)
-        {
-            New-Item -ItemType Directory -Force -Path "$PDFCreatorDownloadPath" > $NULL
-        }
-
-    # Download PDF Creator with BITS
-    Start-BitsTransfer -Source "$PDFCreatorUri" -Destination "$PDFCreatorDownloadPath\PDFCreator.exe"
-
-    # Download the configuration file
-    Start-BitsTransfer -Source "$PDFCreatorIniUri" -Destination "$PDFCreatorDownloadPath\PDFCreator.inf"
-
-    # Install PDF Creator 'silently' (No popup, no restart)
-    cd $PDFCreatorDownloadPath
-    ./PDFCreator.exe /LOADINF="PDFCreator.inf" /VERYSILENT /NORESTART
-
-    # Reboot !
-
+    
 
     Set-Printer -Name "PDFCreator" -Shared $True -Published $True -ShareName "PDFCreator" -PortName "pdfcmon"
-    printui /Xs /n "PDFCreator" ClientSideRender disabled # Set to disabled, or Windows will not be able to use the printer without PDFCreator being installed
-
-    # Done : Everyone can print! Only need to add GPO to computers.
-    # (Yes, for security purposes, not all users should be able to print.)
+    printui /Xs /n "PDFCreator" ClientSideRender enabled
 
 }
+
+
+
+
+
+
+
+
 
 function Download-7Zip
 {
@@ -462,6 +496,9 @@ function Configure-GPO
 # OK - Silence all Output
 SilenceOutput
 
+# OK - Create the Specific Folders (without rights/shares)
+Create-BaseFolders
+
 # OK - Rename what has to be renamed
 Set-PreReq
 
@@ -477,13 +514,7 @@ Install-DHCPServer
 # OK - Install ADDS role and create the new AD domain
 Install-ADDomain
 
-# OK - Create the Specific Folders (without rights/shares)
-#Create-BaseFolders
-
-# NOK - Create SMB Shares for Folders & Printers
-#Create-SMBShares
-
-# OK - Download, Install and Share the PDF Creator Printer. This will make our DC Server a "Printer" Server.
+# OK - Download, Install the PDFCreator Printer. This will make our DC Server a "Printer" Server.
 Install-PDFCreator
 
 # OK - Download 7-Zip... so we can deploy it later ;-)
@@ -500,6 +531,10 @@ Create-Users
 
 # Change default OU for Computers Object
 redircmp OU=Computers,OU=ISEC-Group,OU=Global,DC=isec-group,DC=local
+
+
+# NOK - Create SMB Shares for Folders & Printers
+#Create-SMBShares
 
 
 # NOK - Configure and Deploy all GPO.
